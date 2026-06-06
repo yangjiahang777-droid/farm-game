@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">FARM</string>
+    <string name="title_activity_main">FARM</string>
+    <string name="package_name">com.farmgame.app</string>
+    <string name="custom_url_scheme">com.farmgame.app</string>
+</resources>

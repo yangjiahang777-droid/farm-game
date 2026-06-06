@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>FARM - 像素风挂机农场</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #1a1a2e; font-family: monospace; }
+    #orientation-warning {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: #2d5a1b;
+      color: #fff;
+      font-size: 24px;
+      z-index: 9999;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    #orientation-warning .icon { font-size: 64px; margin-bottom: 20px; animation: rotate 2s infinite; }
+    @keyframes rotate { 0%{transform:rotate(0deg)} 50%{transform:rotate(90deg)} 100%{transform:rotate(0deg)} }
+    #game-container { width: 100%; height: 100%; }
+    @media (orientation: portrait) {
+      #orientation-warning { display: flex !important; }
+      #game-container { display: none !important; }
+    }
+    @media (orientation: landscape) {
+      #orientation-warning { display: none !important; }
+      #game-container { display: block !important; }
+    }
+  </style>
+  <script type="module" crossorigin src="./assets/index-Cl1V3ZH-.js"></script>
+</head>
+<body>
+  <div id="orientation-warning">
+    <div class="icon">📱</div>
+    <div>请横屏游玩</div>
+    <div style="font-size:14px;margin-top:10px;color:#aad68a;">旋转设备以继续</div>
+  </div>
+  <div id="game-container"></div>
+</body>
+</html>
