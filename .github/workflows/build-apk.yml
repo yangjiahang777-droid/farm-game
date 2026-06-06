@@ -25,6 +25,13 @@ jobs:
           node-version: '22'
           cache: npm
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: 'latest'
+          accept-android-sdk-licenses: true
+          packages: 'platforms;android-34 build-tools;34.0.0 platform-tools'
+
       - name: Install npm dependencies
         run: npm ci
 
@@ -34,11 +41,18 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync
 
-      - name: Build Debug APK
+      - name: Fix local.properties for CI
         working-directory: android
         run: |
-          chmod +x ./gradlew
-          ./gradlew assembleDebug --no-daemon
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+
+      - name: Make gradlew executable
+        working-directory: android
+        run: chmod +x ./gradlew
+
+      - name: Build Debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
