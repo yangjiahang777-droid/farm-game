@@ -26,12 +26,10 @@ jobs:
           cache: npm
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v2
+        uses: android-actions/setup-android@v3
         with:
-          api-level: 34
-          build-tools-version: '34.0.0'
-          ndk-version: ''
-          cache: gradle
+          accept-android-sdk-licenses: true
+          packages: 'platforms;android-34 build-tools;34.0.0 platform-tools'
 
       - name: Install npm dependencies
         run: npm ci
@@ -42,7 +40,7 @@ jobs:
       - name: Sync Capacitor Android
         run: npx cap sync android
 
-      - name: Make Gradlew executable
+      - name: Make gradlew executable
         working-directory: android
         run: chmod +x ./gradlew
 
