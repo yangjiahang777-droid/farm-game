@@ -9,6 +9,7 @@ jobs:
   build:
     name: Build Debug APK
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -25,13 +26,6 @@ jobs:
           node-version: '22'
           cache: npm
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          cmdline-tools-version: 'latest'
-          accept-android-sdk-licenses: true
-          packages: 'platforms;android-34 build-tools;34.0.0 platform-tools'
-
       - name: Install npm dependencies
         run: npm ci
 
@@ -41,10 +35,24 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync
 
-      - name: Fix local.properties for CI
-        working-directory: android
+      - name: Setup Android SDK
+        shell: bash
         run: |
-          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          # Download Android command-line tools
+          mkdir -p $HOME/android-sdk/cmdline-tools
+          cd $HOME/android-sdk/cmdline-tools
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+          unzip -q commandlinetools-linux-11076708_latest.zip
+          mv cmdline-tools latest
+          echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+          echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
+          echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
+          echo "$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
+          # Install SDK packages
+          yes | sdkmanager --licenses || true
+          sdkmanager "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+          # Create local.properties
+          echo "sdk.dir=$HOME/android-sdk" > android/local.properties
 
       - name: Make gradlew executable
         working-directory: android
@@ -53,6 +61,9 @@ jobs:
       - name: Build Debug APK
         working-directory: android
         run: ./gradlew assembleDebug --no-daemon
+        env:
+          ANDROID_HOME: /home/runner/android-sdk
+          ANDROID_SDK_ROOT: /home/runner/android-sdk
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
